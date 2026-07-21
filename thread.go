@@ -2,7 +2,6 @@ package openai
 
 import (
 	"context"
-	"net/http"
 )
 
 const (
@@ -112,60 +111,29 @@ type ThreadDeleteResponse struct {
 	httpHeader
 }
 
-// CreateThread creates a new thread.
 func (c *Client) CreateThread(ctx context.Context, request ThreadRequest) (response Thread, err error) {
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(threadsSuffix), withBody(request),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Thread), nil
 }
 
-// RetrieveThread retrieves a thread.
 func (c *Client) RetrieveThread(ctx context.Context, threadID string) (response Thread, err error) {
-	urlSuffix := threadsSuffix + "/" + threadID
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Thread), nil
 }
 
-// ModifyThread modifies a thread.
 func (c *Client) ModifyThread(
 	ctx context.Context,
 	threadID string,
 	request ModifyThreadRequest,
 ) (response Thread, err error) {
-	urlSuffix := threadsSuffix + "/" + threadID
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(urlSuffix), withBody(request),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Thread), nil
 }
 
-// DeleteThread deletes a thread.
 func (c *Client) DeleteThread(
 	ctx context.Context,
 	threadID string,
 ) (response ThreadDeleteResponse, err error) {
-	urlSuffix := threadsSuffix + "/" + threadID
-	req, err := c.newRequest(ctx, http.MethodDelete, c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(ThreadDeleteResponse), nil
 }

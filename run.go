@@ -2,9 +2,6 @@ package openai
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/url"
 )
 
 type Run struct {
@@ -29,13 +26,11 @@ type Run struct {
 	Usage          Usage              `json:"usage,omitempty"`
 
 	Temperature *float32 `json:"temperature,omitempty"`
-	// The maximum number of prompt tokens that may be used over the course of the run.
-	// If the run exceeds the number of prompt tokens specified, the run will end with status 'incomplete'.
+
 	MaxPromptTokens int `json:"max_prompt_tokens,omitempty"`
-	// The maximum number of completion tokens that may be used over the course of the run.
-	// If the run exceeds the number of completion tokens specified, the run will end with status 'incomplete'.
+
 	MaxCompletionTokens int `json:"max_completion_tokens,omitempty"`
-	// ThreadTruncationStrategy defines the truncation strategy to use for the thread.
+
 	TruncationStrategy *ThreadTruncationStrategy `json:"truncation_strategy,omitempty"`
 
 	httpHeader
@@ -91,52 +86,36 @@ type RunRequest struct {
 	Tools                  []Tool          `json:"tools,omitempty"`
 	Metadata               map[string]any  `json:"metadata,omitempty"`
 
-	// Sampling temperature between 0 and 2. Higher values like 0.8 are  more random.
-	// lower values are more focused and deterministic.
 	Temperature *float32 `json:"temperature,omitempty"`
 	TopP        *float32 `json:"top_p,omitempty"`
 
-	// The maximum number of prompt tokens that may be used over the course of the run.
-	// If the run exceeds the number of prompt tokens specified, the run will end with status 'incomplete'.
 	MaxPromptTokens int `json:"max_prompt_tokens,omitempty"`
 
-	// The maximum number of completion tokens that may be used over the course of the run.
-	// If the run exceeds the number of completion tokens specified, the run will end with status 'incomplete'.
 	MaxCompletionTokens int `json:"max_completion_tokens,omitempty"`
 
-	// ThreadTruncationStrategy defines the truncation strategy to use for the thread.
 	TruncationStrategy *ThreadTruncationStrategy `json:"truncation_strategy,omitempty"`
 
-	// This can be either a string or a ToolChoice object.
 	ToolChoice any `json:"tool_choice,omitempty"`
-	// This can be either a string or a ResponseFormat object.
+
 	ResponseFormat any `json:"response_format,omitempty"`
-	// Disable the default behavior of parallel tool calls by setting it: false.
+
 	ParallelToolCalls any `json:"parallel_tool_calls,omitempty"`
 }
 
-// ThreadTruncationStrategy defines the truncation strategy to use for the thread.
-// https://platform.openai.com/docs/assistants/how-it-works/truncation-strategy.
 type ThreadTruncationStrategy struct {
-	// default 'auto'.
 	Type TruncationStrategy `json:"type,omitempty"`
-	// this field should be set if the truncation strategy is set to LastMessages.
+
 	LastMessages *int `json:"last_messages,omitempty"`
 }
 
-// TruncationStrategy defines the existing truncation strategies existing for thread management in an assistant.
 type TruncationStrategy string
 
 const (
-	// TruncationStrategyAuto messages in the middle of the thread will be dropped to fit the context length of the model.
 	TruncationStrategyAuto = TruncationStrategy("auto")
-	// TruncationStrategyLastMessages the thread will be truncated to the n most recent messages in the thread.
+
 	TruncationStrategyLastMessages = TruncationStrategy("last_messages")
 )
 
-// ReponseFormat specifies the format the model must output.
-// https://platform.openai.com/docs/api-reference/runs/createRun#runs-createrun-response_format.
-// Type can either be text or json_object.
 type ReponseFormat struct {
 	Type string `json:"type"`
 }
@@ -145,7 +124,6 @@ type RunModifyRequest struct {
 	Metadata map[string]any `json:"metadata,omitempty"`
 }
 
-// RunList is a list of runs.
 type RunList struct {
 	Runs []Run `json:"data"`
 
@@ -213,7 +191,6 @@ type StepDetailsMessageCreation struct {
 	MessageID string `json:"message_id"`
 }
 
-// RunStepList is a list of steps.
 type RunStepList struct {
 	RunSteps []RunStep `json:"data"`
 
@@ -231,224 +208,83 @@ type Pagination struct {
 	Before *string
 }
 
-// CreateRun creates a new run.
 func (c *Client) CreateRun(
 	ctx context.Context,
 	threadID string,
 	request RunRequest,
 ) (response Run, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/runs", threadID)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL(urlSuffix),
-		withBody(request),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Run), nil
 }
 
-// RetrieveRun retrieves a run.
 func (c *Client) RetrieveRun(
 	ctx context.Context,
 	threadID string,
 	runID string,
 ) (response Run, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s", threadID, runID)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodGet,
-		c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Run), nil
 }
 
-// ModifyRun modifies a run.
 func (c *Client) ModifyRun(
 	ctx context.Context,
 	threadID string,
 	runID string,
 	request RunModifyRequest,
 ) (response Run, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s", threadID, runID)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL(urlSuffix),
-		withBody(request),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Run), nil
 }
 
-// ListRuns lists runs.
 func (c *Client) ListRuns(
 	ctx context.Context,
 	threadID string,
 	pagination Pagination,
 ) (response RunList, err error) {
-	urlValues := url.Values{}
-	if pagination.Limit != nil {
-		urlValues.Add("limit", fmt.Sprintf("%d", *pagination.Limit))
-	}
-	if pagination.Order != nil {
-		urlValues.Add("order", *pagination.Order)
-	}
-	if pagination.After != nil {
-		urlValues.Add("after", *pagination.After)
-	}
-	if pagination.Before != nil {
-		urlValues.Add("before", *pagination.Before)
-	}
-
-	encodedValues := ""
-	if len(urlValues) > 0 {
-		encodedValues = "?" + urlValues.Encode()
-	}
-
-	urlSuffix := fmt.Sprintf("/threads/%s/runs%s", threadID, encodedValues)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodGet,
-		c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(RunList), nil
 }
 
-// SubmitToolOutputs submits tool outputs.
 func (c *Client) SubmitToolOutputs(
 	ctx context.Context,
 	threadID string,
 	runID string,
 	request SubmitToolOutputsRequest) (response Run, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s/submit_tool_outputs", threadID, runID)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL(urlSuffix),
-		withBody(request),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Run), nil
 }
 
-// CancelRun cancels a run.
 func (c *Client) CancelRun(
 	ctx context.Context,
 	threadID string,
 	runID string) (response Run, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s/cancel", threadID, runID)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Run), nil
 }
 
-// CreateThreadAndRun submits tool outputs.
 func (c *Client) CreateThreadAndRun(
 	ctx context.Context,
 	request CreateThreadAndRunRequest) (response Run, err error) {
-	urlSuffix := "/threads/runs"
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL(urlSuffix),
-		withBody(request),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(Run), nil
 }
 
-// RetrieveRunStep retrieves a run step.
 func (c *Client) RetrieveRunStep(
 	ctx context.Context,
 	threadID string,
 	runID string,
 	stepID string,
 ) (response RunStep, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s/steps/%s", threadID, runID, stepID)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodGet,
-		c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(RunStep), nil
 }
 
-// ListRunSteps lists run steps.
 func (c *Client) ListRunSteps(
 	ctx context.Context,
 	threadID string,
 	runID string,
 	pagination Pagination,
 ) (response RunStepList, err error) {
-	urlValues := url.Values{}
-	if pagination.Limit != nil {
-		urlValues.Add("limit", fmt.Sprintf("%d", *pagination.Limit))
-	}
-	if pagination.Order != nil {
-		urlValues.Add("order", *pagination.Order)
-	}
-	if pagination.After != nil {
-		urlValues.Add("after", *pagination.After)
-	}
-	if pagination.Before != nil {
-		urlValues.Add("before", *pagination.Before)
-	}
-
-	encodedValues := ""
-	if len(urlValues) > 0 {
-		encodedValues = "?" + urlValues.Encode()
-	}
-
-	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s/steps%s", threadID, runID, encodedValues)
-	req, err := c.newRequest(
-		ctx,
-		http.MethodGet,
-		c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(RunStepList), nil
 }
