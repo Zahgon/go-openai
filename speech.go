@@ -2,7 +2,6 @@ package openai
 
 import (
 	"context"
-	"net/http"
 )
 
 type SpeechModel string
@@ -44,22 +43,12 @@ type CreateSpeechRequest struct {
 	Model          SpeechModel          `json:"model"`
 	Input          string               `json:"input"`
 	Voice          SpeechVoice          `json:"voice"`
-	Instructions   string               `json:"instructions,omitempty"`    // Optional, Doesnt work with tts-1 or tts-1-hd.
-	ResponseFormat SpeechResponseFormat `json:"response_format,omitempty"` // Optional, default to mp3
-	Speed          float64              `json:"speed,omitempty"`           // Optional, default to 1.0
+	Instructions   string               `json:"instructions,omitempty"`
+	ResponseFormat SpeechResponseFormat `json:"response_format,omitempty"`
+	Speed          float64              `json:"speed,omitempty"`
 }
 
 func (c *Client) CreateSpeech(ctx context.Context, request CreateSpeechRequest) (response RawResponse, err error) {
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL("/audio/speech", withModel(string(request.Model))),
-		withBody(request),
-		withContentType("application/json"),
-	)
-	if err != nil {
-		return
-	}
-
-	return c.sendRequestRaw(req)
+	_ = "STUB: not implemented"
+	return *new(RawResponse), nil
 }

@@ -1,12 +1,7 @@
 package openai
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"net/url"
 )
 
 const batchesSuffix = "/batches"
@@ -32,8 +27,8 @@ type BatchChatCompletionRequest struct {
 }
 
 func (r BatchChatCompletionRequest) MarshalBatchLineItem() []byte {
-	marshal, _ := json.Marshal(r)
-	return marshal
+	_ = "STUB: not implemented"
+	return nil
 }
 
 type BatchCompletionRequest struct {
@@ -44,8 +39,8 @@ type BatchCompletionRequest struct {
 }
 
 func (r BatchCompletionRequest) MarshalBatchLineItem() []byte {
-	marshal, _ := json.Marshal(r)
-	return marshal
+	_ = "STUB: not implemented"
+	return nil
 }
 
 type BatchEmbeddingRequest struct {
@@ -62,15 +57,9 @@ type BatchResponseRequest struct {
 	URL      BatchEndpoint         `json:"url"`
 }
 
-func (r BatchResponseRequest) MarshalBatchLineItem() []byte {
-	marshal, _ := json.Marshal(r)
-	return marshal
-}
+func (r BatchResponseRequest) MarshalBatchLineItem() []byte { _ = "STUB: not implemented"; return nil }
 
-func (r BatchEmbeddingRequest) MarshalBatchLineItem() []byte {
-	marshal, _ := json.Marshal(r)
-	return marshal
-}
+func (r BatchEmbeddingRequest) MarshalBatchLineItem() []byte { _ = "STUB: not implemented"; return nil }
 
 type Batch struct {
 	ID       string        `json:"id"`
@@ -121,22 +110,12 @@ type BatchResponse struct {
 	Batch
 }
 
-// CreateBatch — API call to Create batch.
 func (c *Client) CreateBatch(
 	ctx context.Context,
 	request CreateBatchRequest,
 ) (response BatchResponse, err error) {
-	if request.CompletionWindow == "" {
-		request.CompletionWindow = "24h"
-	}
-
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(batchesSuffix), withBody(request))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(BatchResponse), nil
 }
 
 type UploadBatchFileRequest struct {
@@ -144,63 +123,31 @@ type UploadBatchFileRequest struct {
 	Lines    []BatchLineItem
 }
 
-func (r *UploadBatchFileRequest) MarshalJSONL() []byte {
-	buff := bytes.Buffer{}
-	for i, line := range r.Lines {
-		if i != 0 {
-			buff.Write([]byte("\n"))
-		}
-		buff.Write(line.MarshalBatchLineItem())
-	}
-	return buff.Bytes()
-}
+func (r *UploadBatchFileRequest) MarshalJSONL() []byte { _ = "STUB: not implemented"; return nil }
 
 func (r *UploadBatchFileRequest) AddChatCompletion(customerID string, body ChatCompletionRequest) {
-	r.Lines = append(r.Lines, BatchChatCompletionRequest{
-		CustomID: customerID,
-		Body:     body,
-		Method:   http.MethodPost,
-		URL:      BatchEndpointChatCompletions,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 func (r *UploadBatchFileRequest) AddCompletion(customerID string, body CompletionRequest) {
-	r.Lines = append(r.Lines, BatchCompletionRequest{
-		CustomID: customerID,
-		Body:     body,
-		Method:   http.MethodPost,
-		URL:      BatchEndpointCompletions,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 func (r *UploadBatchFileRequest) AddEmbedding(customerID string, body EmbeddingRequest) {
-	r.Lines = append(r.Lines, BatchEmbeddingRequest{
-		CustomID: customerID,
-		Body:     body,
-		Method:   http.MethodPost,
-		URL:      BatchEndpointEmbeddings,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 func (r *UploadBatchFileRequest) AddResponse(customerID string, body CreateResponseRequest) {
-	r.Lines = append(r.Lines, BatchResponseRequest{
-		CustomID: customerID,
-		Body:     body,
-		Method:   http.MethodPost,
-		URL:      BatchEndpointResponses,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
-// UploadBatchFile — upload batch file.
 func (c *Client) UploadBatchFile(ctx context.Context, request UploadBatchFileRequest) (File, error) {
-	if request.FileName == "" {
-		request.FileName = "@batchinput.jsonl"
-	}
-	return c.CreateFileBytes(ctx, FileBytesRequest{
-		Name:    request.FileName,
-		Bytes:   request.MarshalJSONL(),
-		Purpose: PurposeBatch,
-	})
+	_ = "STUB: not implemented"
+	return *new(File), nil
 }
 
 type CreateBatchWithUploadFileRequest struct {
@@ -210,53 +157,28 @@ type CreateBatchWithUploadFileRequest struct {
 	UploadBatchFileRequest
 }
 
-// CreateBatchWithUploadFile — API call to Create batch with upload file.
 func (c *Client) CreateBatchWithUploadFile(
 	ctx context.Context,
 	request CreateBatchWithUploadFileRequest,
 ) (response BatchResponse, err error) {
-	var file File
-	file, err = c.UploadBatchFile(ctx, UploadBatchFileRequest{
-		FileName: request.FileName,
-		Lines:    request.Lines,
-	})
-	if err != nil {
-		return
-	}
-	return c.CreateBatch(ctx, CreateBatchRequest{
-		InputFileID:      file.ID,
-		Endpoint:         request.Endpoint,
-		CompletionWindow: request.CompletionWindow,
-		Metadata:         request.Metadata,
-	})
+	_ = "STUB: not implemented"
+	return *new(BatchResponse), nil
 }
 
-// RetrieveBatch — API call to Retrieve batch.
 func (c *Client) RetrieveBatch(
 	ctx context.Context,
 	batchID string,
 ) (response BatchResponse, err error) {
-	urlSuffix := fmt.Sprintf("%s/%s", batchesSuffix, batchID)
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix))
-	if err != nil {
-		return
-	}
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(BatchResponse), nil
 }
 
-// CancelBatch — API call to Cancel batch.
 func (c *Client) CancelBatch(
 	ctx context.Context,
 	batchID string,
 ) (response BatchResponse, err error) {
-	urlSuffix := fmt.Sprintf("%s/%s/cancel", batchesSuffix, batchID)
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(urlSuffix))
-	if err != nil {
-		return
-	}
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(BatchResponse), nil
 }
 
 type ListBatchResponse struct {
@@ -268,26 +190,7 @@ type ListBatchResponse struct {
 	HasMore bool    `json:"has_more"`
 }
 
-// ListBatch API call to List batch.
 func (c *Client) ListBatch(ctx context.Context, after *string, limit *int) (response ListBatchResponse, err error) {
-	urlValues := url.Values{}
-	if limit != nil {
-		urlValues.Add("limit", fmt.Sprintf("%d", *limit))
-	}
-	if after != nil {
-		urlValues.Add("after", *after)
-	}
-	encodedValues := ""
-	if len(urlValues) > 0 {
-		encodedValues = "?" + urlValues.Encode()
-	}
-
-	urlSuffix := fmt.Sprintf("%s%s", batchesSuffix, encodedValues)
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(ListBatchResponse), nil
 }

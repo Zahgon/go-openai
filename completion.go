@@ -2,12 +2,10 @@ package openai
 
 import (
 	"context"
-	"net/http"
 )
 
 const completionsSuffix = "/completions"
 
-// Text generation and reasoning models provided by OpenAI.
 const (
 	O1Mini                  = "o1-mini"
 	O1Mini20240912          = "o1-mini-2024-09-12"
@@ -86,38 +84,35 @@ const (
 	GPT3Dot5Turbo16K0613    = "gpt-3.5-turbo-16k-0613"
 	GPT3Dot5Turbo           = "gpt-3.5-turbo"
 	GPT3Dot5TurboInstruct   = "gpt-3.5-turbo-instruct"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3TextDavinci003 = "text-davinci-003"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3TextDavinci002 = "text-davinci-002"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3TextCurie001 = "text-curie-001"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3TextBabbage001 = "text-babbage-001"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3TextAda001 = "text-ada-001"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3TextDavinci001 = "text-davinci-001"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3DavinciInstructBeta = "davinci-instruct-beta"
-	// Deprecated: Model is shutdown. Use davinci-002 instead.
+
 	GPT3Davinci    = "davinci"
 	GPT3Davinci002 = "davinci-002"
-	// Deprecated: Model is shutdown. Use gpt-3.5-turbo-instruct instead.
+
 	GPT3CurieInstructBeta = "curie-instruct-beta"
 	GPT3Curie             = "curie"
 	GPT3Curie002          = "curie-002"
-	// Deprecated: Model is shutdown. Use babbage-002 instead.
+
 	GPT3Ada    = "ada"
 	GPT3Ada002 = "ada-002"
-	// Deprecated: Model is shutdown. Use babbage-002 instead.
+
 	GPT3Babbage    = "babbage"
 	GPT3Babbage002 = "babbage-002"
 )
 
-// Codex Defines the models provided by OpenAI.
-// These models are designed for code-specific tasks, and use
-// a different tokenizer which optimizes for whitespace.
 const (
 	CodexCodeDavinci002 = "code-davinci-002"
 	CodexCodeCushman001 = "code-cushman-001"
@@ -222,46 +217,23 @@ var disabledModelsForEndpoints = map[string]map[string]bool{
 }
 
 func checkEndpointSupportsModel(endpoint, model string) bool {
-	return !disabledModelsForEndpoints[endpoint][model]
+	_ = "STUB: not implemented"
+	return false
 }
 
-func checkPromptType(prompt any) bool {
-	_, isString := prompt.(string)
-	_, isStringSlice := prompt.([]string)
-	if isString || isStringSlice {
-		return true
-	}
+func checkPromptType(prompt any) bool { _ = "STUB: not implemented"; return false }
 
-	// check if it is prompt is []string hidden under []any
-	slice, isSlice := prompt.([]any)
-	if !isSlice {
-		return false
-	}
-
-	for _, item := range slice {
-		_, itemIsString := item.(string)
-		if !itemIsString {
-			return false
-		}
-	}
-	return true // all items in the slice are string, so it is []string
-}
-
-// CompletionRequest represents a request structure for completion API.
 type CompletionRequest struct {
 	Model            string  `json:"model"`
 	Prompt           any     `json:"prompt,omitempty"`
 	BestOf           int     `json:"best_of,omitempty"`
 	Echo             bool    `json:"echo,omitempty"`
 	FrequencyPenalty float32 `json:"frequency_penalty,omitempty"`
-	// LogitBias is must be a token id string (specified by their token ID in the tokenizer), not a word string.
-	// incorrect: `"logit_bias":{"You": 6}`, correct: `"logit_bias":{"1639": 6}`
-	// refs: https://platform.openai.com/docs/api-reference/completions/create#completions/create-logit_bias
+
 	LogitBias map[string]int `json:"logit_bias,omitempty"`
-	// Store can be set to true to store the output of this completion request for use in distillations and evals.
-	// https://platform.openai.com/docs/api-reference/chat/create#chat-create-store
+
 	Store bool `json:"store,omitempty"`
-	// Metadata to store with the completion.
+
 	Metadata        map[string]string `json:"metadata,omitempty"`
 	LogProbs        int               `json:"logprobs,omitempty"`
 	MaxTokens       int               `json:"max_tokens,omitempty"`
@@ -274,11 +246,10 @@ type CompletionRequest struct {
 	Temperature     float32           `json:"temperature,omitempty"`
 	TopP            float32           `json:"top_p,omitempty"`
 	User            string            `json:"user,omitempty"`
-	// Options for streaming response. Only set this when you set stream: true.
+
 	StreamOptions *StreamOptions `json:"stream_options,omitempty"`
 }
 
-// CompletionChoice represents one of possible completions.
 type CompletionChoice struct {
 	Text         string        `json:"text"`
 	Index        int           `json:"index"`
@@ -286,7 +257,6 @@ type CompletionChoice struct {
 	LogProbs     LogprobResult `json:"logprobs"`
 }
 
-// LogprobResult represents logprob result of Choice.
 type LogprobResult struct {
 	Tokens        []string             `json:"tokens"`
 	TokenLogprobs []float32            `json:"token_logprobs"`
@@ -294,7 +264,6 @@ type LogprobResult struct {
 	TextOffset    []int                `json:"text_offset"`
 }
 
-// CompletionResponse represents a response structure for completion API.
 type CompletionResponse struct {
 	ID      string             `json:"id"`
 	Object  string             `json:"object"`
@@ -306,41 +275,10 @@ type CompletionResponse struct {
 	httpHeader
 }
 
-// CreateCompletion — API call to create a completion. This is the main endpoint of the API. Returns new text as well
-// as, if requested, the probabilities over each alternative token at each position.
-//
-// If using a fine-tuned model, simply provide the model's ID in the CompletionRequest object,
-// and the server will use the model's parameters to generate the completion.
 func (c *Client) CreateCompletion(
 	ctx context.Context,
 	request CompletionRequest,
 ) (response CompletionResponse, err error) {
-	if request.Stream {
-		err = ErrCompletionStreamNotSupported
-		return
-	}
-
-	urlSuffix := completionsSuffix
-	if !checkEndpointSupportsModel(urlSuffix, request.Model) {
-		err = ErrCompletionUnsupportedModel
-		return
-	}
-
-	if !checkPromptType(request.Prompt) {
-		err = ErrCompletionRequestPromptTypeNotSupported
-		return
-	}
-
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL(urlSuffix, withModel(request.Model)),
-		withBody(request),
-	)
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(CompletionResponse), nil
 }

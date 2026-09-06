@@ -13,7 +13,6 @@ func main() {
 	ctx := context.Background()
 	client := openai.NewClient(os.Getenv("OPENAI_API_KEY"))
 
-	// describe the function & its inputs
 	params := jsonschema.Definition{
 		Type: jsonschema.Object,
 		Properties: map[string]jsonschema.Definition{
@@ -38,7 +37,6 @@ func main() {
 		Function: &f,
 	}
 
-	// simulate user asking a question that requires the function
 	dialogue := []openai.ChatCompletionMessage{
 		{Role: openai.ChatMessageRoleUser, Content: "What is the weather in Boston today?"},
 	}
@@ -62,7 +60,6 @@ func main() {
 		return
 	}
 
-	// simulate calling the function & responding to OpenAI
 	dialogue = append(dialogue, msg)
 	fmt.Printf("OpenAI called us back wanting to invoke our function '%v' with params '%v'\n",
 		msg.ToolCalls[0].Function.Name, msg.ToolCalls[0].Function.Arguments)
@@ -87,7 +84,6 @@ func main() {
 		return
 	}
 
-	// display OpenAI's response to the original question utilizing our function
 	msg = resp.Choices[0].Message
 	fmt.Printf("OpenAI answered the original request with: %v\n",
 		msg.Content)

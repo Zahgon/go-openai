@@ -2,9 +2,6 @@ package openai
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/url"
 )
 
 const (
@@ -88,20 +85,11 @@ type MessageDeletionStatus struct {
 	httpHeader
 }
 
-// CreateMessage creates a new message.
 func (c *Client) CreateMessage(ctx context.Context, threadID string, request MessageRequest) (msg Message, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/%s", threadID, messagesSuffix)
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(urlSuffix), withBody(request),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &msg)
-	return
+	_ = "STUB: not implemented"
+	return *new(Message), nil
 }
 
-// ListMessage fetches all messages in the thread.
 func (c *Client) ListMessage(ctx context.Context, threadID string,
 	limit *int,
 	order *string,
@@ -109,116 +97,47 @@ func (c *Client) ListMessage(ctx context.Context, threadID string,
 	before *string,
 	runID *string,
 ) (messages MessagesList, err error) {
-	urlValues := url.Values{}
-	if limit != nil {
-		urlValues.Add("limit", fmt.Sprintf("%d", *limit))
-	}
-	if order != nil {
-		urlValues.Add("order", *order)
-	}
-	if after != nil {
-		urlValues.Add("after", *after)
-	}
-	if before != nil {
-		urlValues.Add("before", *before)
-	}
-	if runID != nil {
-		urlValues.Add("run_id", *runID)
-	}
-
-	encodedValues := ""
-	if len(urlValues) > 0 {
-		encodedValues = "?" + urlValues.Encode()
-	}
-
-	urlSuffix := fmt.Sprintf("/threads/%s/%s%s", threadID, messagesSuffix, encodedValues)
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &messages)
-	return
+	_ = "STUB: not implemented"
+	return *new(MessagesList), nil
 }
 
-// RetrieveMessage retrieves a Message.
 func (c *Client) RetrieveMessage(
 	ctx context.Context,
 	threadID, messageID string,
 ) (msg Message, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/%s/%s", threadID, messagesSuffix, messageID)
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &msg)
-	return
+	_ = "STUB: not implemented"
+	return *new(Message), nil
 }
 
-// ModifyMessage modifies a message.
 func (c *Client) ModifyMessage(
 	ctx context.Context,
 	threadID, messageID string,
 	metadata map[string]string,
 ) (msg Message, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/%s/%s", threadID, messagesSuffix, messageID)
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(urlSuffix),
-		withBody(map[string]any{"metadata": metadata}), withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &msg)
-	return
+	_ = "STUB: not implemented"
+	return *new(Message), nil
 }
 
-// RetrieveMessageFile fetches a message file.
 func (c *Client) RetrieveMessageFile(
 	ctx context.Context,
 	threadID, messageID, fileID string,
 ) (file MessageFile, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/%s/%s/files/%s", threadID, messagesSuffix, messageID, fileID)
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &file)
-	return
+	_ = "STUB: not implemented"
+	return *new(MessageFile), nil
 }
 
-// ListMessageFiles fetches all files attached to a message.
 func (c *Client) ListMessageFiles(
 	ctx context.Context,
 	threadID, messageID string,
 ) (files MessageFilesList, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/%s/%s/files", threadID, messagesSuffix, messageID)
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &files)
-	return
+	_ = "STUB: not implemented"
+	return *new(MessageFilesList), nil
 }
 
-// DeleteMessage deletes a message..
 func (c *Client) DeleteMessage(
 	ctx context.Context,
 	threadID, messageID string,
 ) (status MessageDeletionStatus, err error) {
-	urlSuffix := fmt.Sprintf("/threads/%s/%s/%s", threadID, messagesSuffix, messageID)
-	req, err := c.newRequest(ctx, http.MethodDelete, c.fullURL(urlSuffix),
-		withBetaAssistantVersion(c.config.AssistantVersion))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &status)
-	return
+	_ = "STUB: not implemented"
+	return *new(MessageDeletionStatus), nil
 }

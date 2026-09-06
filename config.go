@@ -2,8 +2,6 @@ package openai
 
 import (
 	"net/http"
-	"regexp"
-	"strings"
 )
 
 const (
@@ -28,87 +26,44 @@ const (
 
 const AzureAPIKeyHeader = "api-key"
 
-const defaultAssistantVersion = "v2" // upgrade to v2 to support vector store
+const defaultAssistantVersion = "v2"
 
 type HTTPDoer interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-// ClientConfig is a configuration of a client.
 type ClientConfig struct {
 	authToken string
 
 	BaseURL              string
 	OrgID                string
 	APIType              APIType
-	APIVersion           string // required when APIType is APITypeAzure or APITypeAzureAD or APITypeAnthropic
+	APIVersion           string
 	AssistantVersion     string
-	AzureModelMapperFunc func(model string) string // replace model to azure deployment name func
+	AzureModelMapperFunc func(model string) string
 	HTTPClient           HTTPDoer
 
 	EmptyMessagesLimit uint
 }
 
 func DefaultConfig(authToken string) ClientConfig {
-	return ClientConfig{
-		authToken:        authToken,
-		BaseURL:          openaiAPIURLv1,
-		APIType:          APITypeOpenAI,
-		AssistantVersion: defaultAssistantVersion,
-		OrgID:            "",
-
-		HTTPClient: &http.Client{},
-
-		EmptyMessagesLimit: defaultEmptyMessagesLimit,
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientConfig)
 }
 
 func DefaultAzureConfig(apiKey, baseURL string) ClientConfig {
-	return ClientConfig{
-		authToken:  apiKey,
-		BaseURL:    baseURL,
-		OrgID:      "",
-		APIType:    APITypeAzure,
-		APIVersion: "2023-05-15",
-		AzureModelMapperFunc: func(model string) string {
-			// only 3.5 models have the "." stripped in their names
-			if strings.Contains(model, "3.5") {
-				return regexp.MustCompile(`[.:]`).ReplaceAllString(model, "")
-			}
-			return strings.ReplaceAll(model, ":", "")
-		},
-
-		HTTPClient: &http.Client{},
-
-		EmptyMessagesLimit: defaultEmptyMessagesLimit,
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientConfig)
 }
 
 func DefaultAnthropicConfig(apiKey, baseURL string) ClientConfig {
-	if baseURL == "" {
-		baseURL = "https://api.anthropic.com/v1"
-	}
-	return ClientConfig{
-		authToken:  apiKey,
-		BaseURL:    baseURL,
-		OrgID:      "",
-		APIType:    APITypeAnthropic,
-		APIVersion: AnthropicAPIVersion,
-
-		HTTPClient: &http.Client{},
-
-		EmptyMessagesLimit: defaultEmptyMessagesLimit,
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientConfig)
 }
 
-func (ClientConfig) String() string {
-	return "<OpenAI API ClientConfig>"
-}
+func (ClientConfig) String() string { _ = "STUB: not implemented"; return "" }
 
 func (c ClientConfig) GetAzureDeploymentByModel(model string) string {
-	if c.AzureModelMapperFunc != nil {
-		return c.AzureModelMapperFunc(model)
-	}
-
-	return model
+	_ = "STUB: not implemented"
+	return ""
 }

@@ -34,7 +34,6 @@ func main() {
 	}
 	fmt.Println(response.GetOutputText())
 
-	// Continue the conversation without resending its earlier messages.
 	response, err = client.CreateResponse(ctx, openai.CreateResponseRequest{
 		Model:              model,
 		Input:              "Now give me a concrete use case.",

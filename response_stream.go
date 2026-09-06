@@ -3,10 +3,8 @@ package openai
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 )
 
-// ResponseStreamEventType identifies an event emitted while a response is generated.
 type ResponseStreamEventType string
 
 const (
@@ -65,7 +63,6 @@ const (
 	ResponseStreamEventError                       ResponseStreamEventType = "error"
 )
 
-// ResponseStreamEvent contains the common fields across Responses API SSE event variants.
 type ResponseStreamEvent struct {
 	Type              ResponseStreamEventType `json:"type"`
 	SequenceNumber    int                     `json:"sequence_number,omitempty"`
@@ -91,41 +88,19 @@ type ResponseStreamEvent struct {
 	Raw               json.RawMessage         `json:"-"`
 }
 
-// UnmarshalJSON decodes known event fields and retains the complete event for
-// forward compatibility with event variants added by the API.
 func (e *ResponseStreamEvent) UnmarshalJSON(data []byte) error {
-	type eventAlias ResponseStreamEvent
-	if err := json.Unmarshal(data, (*eventAlias)(e)); err != nil {
-		return err
-	}
-	e.Raw = append(e.Raw[:0], data...)
+	_ = "STUB: not implemented"
 	return nil
 }
 
-// ResponseStream reads server-sent events from a streaming Responses API request.
 type ResponseStream struct {
 	*streamReader[ResponseStreamEvent]
 }
 
-// CreateResponseStream creates a response and streams its generation events.
 func (c *Client) CreateResponseStream(
 	ctx context.Context,
 	request CreateResponseRequest,
 ) (stream *ResponseStream, err error) {
-	request.Stream = true
-	req, err := c.newRequest(
-		ctx,
-		http.MethodPost,
-		c.fullURL(responsesSuffix),
-		withBody(request),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	reader, err := sendRequestStream[ResponseStreamEvent](c, req)
-	if err != nil {
-		return nil, err
-	}
-	return &ResponseStream{streamReader: reader}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

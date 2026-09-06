@@ -2,9 +2,6 @@ package openai
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/url"
 )
 
 type FineTuningJob struct {
@@ -57,45 +54,25 @@ type FineTuningJobEvent struct {
 	Type      string `json:"type"`
 }
 
-// CreateFineTuningJob create a fine tuning job.
 func (c *Client) CreateFineTuningJob(
 	ctx context.Context,
 	request FineTuningJobRequest,
 ) (response FineTuningJob, err error) {
-	urlSuffix := "/fine_tuning/jobs"
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(urlSuffix), withBody(request))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(FineTuningJob), nil
 }
 
-// CancelFineTuningJob cancel a fine tuning job.
 func (c *Client) CancelFineTuningJob(ctx context.Context, fineTuningJobID string) (response FineTuningJob, err error) {
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL("/fine_tuning/jobs/"+fineTuningJobID+"/cancel"))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(FineTuningJob), nil
 }
 
-// RetrieveFineTuningJob retrieve a fine tuning job.
 func (c *Client) RetrieveFineTuningJob(
 	ctx context.Context,
 	fineTuningJobID string,
 ) (response FineTuningJob, err error) {
-	urlSuffix := fmt.Sprintf("/fine_tuning/jobs/%s", fineTuningJobID)
-	req, err := c.newRequest(ctx, http.MethodGet, c.fullURL(urlSuffix))
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(FineTuningJob), nil
 }
 
 type listFineTuningJobEventsParameters struct {
@@ -106,54 +83,20 @@ type listFineTuningJobEventsParameters struct {
 type ListFineTuningJobEventsParameter func(*listFineTuningJobEventsParameters)
 
 func ListFineTuningJobEventsWithAfter(after string) ListFineTuningJobEventsParameter {
-	return func(args *listFineTuningJobEventsParameters) {
-		args.after = &after
-	}
+	_ = "STUB: not implemented"
+	return *new(ListFineTuningJobEventsParameter)
 }
 
 func ListFineTuningJobEventsWithLimit(limit int) ListFineTuningJobEventsParameter {
-	return func(args *listFineTuningJobEventsParameters) {
-		args.limit = &limit
-	}
+	_ = "STUB: not implemented"
+	return *new(ListFineTuningJobEventsParameter)
 }
 
-// ListFineTuningJobs list fine tuning jobs events.
 func (c *Client) ListFineTuningJobEvents(
 	ctx context.Context,
 	fineTuningJobID string,
 	setters ...ListFineTuningJobEventsParameter,
 ) (response FineTuningJobEventList, err error) {
-	parameters := &listFineTuningJobEventsParameters{
-		after: nil,
-		limit: nil,
-	}
-
-	for _, setter := range setters {
-		setter(parameters)
-	}
-
-	urlValues := url.Values{}
-	if parameters.after != nil {
-		urlValues.Add("after", *parameters.after)
-	}
-	if parameters.limit != nil {
-		urlValues.Add("limit", fmt.Sprintf("%d", *parameters.limit))
-	}
-
-	encodedValues := ""
-	if len(urlValues) > 0 {
-		encodedValues = "?" + urlValues.Encode()
-	}
-
-	req, err := c.newRequest(
-		ctx,
-		http.MethodGet,
-		c.fullURL("/fine_tuning/jobs/"+fineTuningJobID+"/events"+encodedValues),
-	)
-	if err != nil {
-		return
-	}
-
-	err = c.sendRequest(req, &response)
-	return
+	_ = "STUB: not implemented"
+	return *new(FineTuningJobEventList), nil
 }
